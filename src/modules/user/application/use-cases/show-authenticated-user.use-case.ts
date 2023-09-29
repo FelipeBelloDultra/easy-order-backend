@@ -3,7 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { UseCase } from "~/application/use-case/use-case";
 
 import { UserRepository } from "../repository/user-repository";
-import { User } from "../../domain/User";
+import { User } from "../../domain/user";
 import { UserNotFound } from "./errors/user-not-found";
 
 type Input = {

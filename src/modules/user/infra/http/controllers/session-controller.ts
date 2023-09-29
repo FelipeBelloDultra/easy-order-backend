@@ -1,8 +1,8 @@
 import { container } from "tsyringe";
 import { type Request, type Response } from "express";
 
-import { AuthenticateUser } from "../../application/use-cases/authenticate-user.use-case";
-import { ShowAuthenticatedUser } from "../../application/use-cases/show-authenticated-user.use-case";
+import { AuthenticateUser } from "~/modules/user/application/use-cases/authenticate-user.use-case";
+import { ShowAuthenticatedUser } from "~/modules/user/application/use-cases/show-authenticated-user.use-case";
 
 export class SessionController {
   public async create(req: Request, res: Response): Promise<Response> {

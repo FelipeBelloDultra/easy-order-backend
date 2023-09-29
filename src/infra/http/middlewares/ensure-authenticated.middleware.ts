@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from "express";
+import { type NextFunction, type Request, type Response } from "express";
 
 import { MissingJwt } from "~/core/domain/errors/missing-jwt";
 import { Jwt } from "~/core/domain/jwt";

@@ -7,6 +7,7 @@ import { ValidationFailed } from "./errors/validation-failed";
 const productSchema = zod.object({
   name: zod.string().min(5).max(255),
   description: zod.string().min(5).max(255).optional(),
+  userId: zod.string(),
   price: zod.number(),
 });
 
@@ -25,8 +26,15 @@ export class Product extends Entity<ProductProps> {
     return this.props.description;
   }
 
-  private constructor({ description, name, price }: ProductProps, id?: string) {
-    super({ name, price, description }, id);
+  public get _userId(): string {
+    return this.props.userId;
+  }
+
+  private constructor(
+    { description, name, price, userId }: ProductProps,
+    id?: string
+  ) {
+    super({ name, price, description, userId }, id);
   }
 
   private static realToCents(value: number): number {
@@ -39,6 +47,7 @@ export class Product extends Entity<ProductProps> {
         name: product.name,
         price: product.price,
         description: product.description,
+        userId: product.userId,
       });
     } catch (error) {
       if (error instanceof zod.ZodError) {
@@ -55,6 +64,7 @@ export class Product extends Entity<ProductProps> {
         name: product.name,
         description: product.description,
         price: id ? product.price : this.realToCents(product.price),
+        userId: product.userId,
       },
       id
     );

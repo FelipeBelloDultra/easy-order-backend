@@ -1,16 +1,16 @@
 import { type Request, type Response } from "express";
 import { container } from "tsyringe";
 
-import { ShowAuthenticatedUser } from "~/modules/user/application/use-cases/show-authenticated-user.use-case";
+import { AuthenticateUser } from "~/modules/user/application/use-cases/authenticate-user.use-case";
 import { Controller } from "~/application/controller/controller";
 
 export class AuthenticateUserController implements Controller {
   public async handle(req: Request, res: Response): Promise<Response> {
-    const { id, email } = req.user;
+    const { password, email } = req.body;
 
-    const showAuthenticatedUser = container.resolve(ShowAuthenticatedUser);
+    const authenticateUser = container.resolve(AuthenticateUser);
 
-    const result = await showAuthenticatedUser.execute({ email, id });
+    const result = await authenticateUser.execute({ email, password });
 
     return res.json(result);
   }

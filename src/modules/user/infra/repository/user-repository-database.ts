@@ -20,12 +20,14 @@ export class UserRepositoryDatabase implements UserRepository {
 
     if (!user) return undefined;
 
-    return User.create({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-    });
+    return User.create(
+      {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+      },
+      user.id
+    );
   }
 
   public async findById(id: string): Promise<User | undefined> {
@@ -33,11 +35,13 @@ export class UserRepositoryDatabase implements UserRepository {
 
     if (!user) return undefined;
 
-    return User.create({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      password: user.password,
-    });
+    return User.create(
+      {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+      },
+      user.id
+    );
   }
 }

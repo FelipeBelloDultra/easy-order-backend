@@ -1,5 +1,8 @@
+import { inject, injectable } from "tsyringe";
+
 import { UseCase } from "~/application/use-case/use-case";
 import { Jwt } from "~/core/domain/jwt";
+
 import { UserRepository } from "../repository/user-repository";
 import { HttpError } from "~/core/errors/http-error";
 
@@ -8,16 +11,13 @@ type Input = {
   password: string;
 };
 type Output = Promise<Jwt>;
-type AuthenticateUserProps = {
-  userRepository: UserRepository;
-};
 
+@injectable()
 export class AuthenticateUser implements UseCase<Input, Output> {
-  private readonly userRepository: UserRepository;
-
-  constructor({ userRepository }: AuthenticateUserProps) {
-    this.userRepository = userRepository;
-  }
+  constructor(
+    @inject("UserRepository")
+    private readonly userRepository: UserRepository
+  ) {}
 
   public async execute(input: Input): Output {
     const finded = await this.userRepository.findByEmail(input.email);

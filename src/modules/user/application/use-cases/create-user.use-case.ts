@@ -1,7 +1,10 @@
+import { inject, injectable } from "tsyringe";
+
 import { UseCase } from "~/application/use-case/use-case";
+import { HttpError } from "~/core/errors/http-error";
+
 import { UserRepository } from "../repository/user-repository";
 import { User } from "../../domain/User";
-import { HttpError } from "~/core/errors/http-error";
 
 type Input = {
   name: string;
@@ -9,16 +12,13 @@ type Input = {
   password: string;
 };
 type Output = Promise<void>;
-type CreateUserProps = {
-  userRepository: UserRepository;
-};
 
+@injectable()
 export class CreateUser implements UseCase<Input, Output> {
-  private readonly userRepository: UserRepository;
-
-  constructor({ userRepository }: CreateUserProps) {
-    this.userRepository = userRepository;
-  }
+  constructor(
+    @inject("UserRepository")
+    private readonly userRepository: UserRepository
+  ) {}
 
   public async execute(input: Input): Output {
     const user = await User.create({

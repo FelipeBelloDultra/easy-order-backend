@@ -1,23 +1,23 @@
+import { inject, injectable } from "tsyringe";
+
+import { HttpError } from "~/core/errors/http-error";
 import { UseCase } from "~/application/use-case/use-case";
+
 import { UserRepository } from "../repository/user-repository";
 import { User } from "../../domain/User";
-import { HttpError } from "~/core/errors/http-error";
 
 type Input = {
   id: string;
   email: string;
 };
 type Output = Promise<User>;
-type ShowAuthenticatedUserProps = {
-  userRepository: UserRepository;
-};
 
+@injectable()
 export class ShowAuthenticatedUser implements UseCase<Input, Output> {
-  private readonly userRepository: UserRepository;
-
-  constructor({ userRepository }: ShowAuthenticatedUserProps) {
-    this.userRepository = userRepository;
-  }
+  constructor(
+    @inject("UserRepository")
+    private readonly userRepository: UserRepository
+  ) {}
 
   public async execute(input: Input): Output {
     const user = await this.userRepository.findById(input.id);

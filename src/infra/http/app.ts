@@ -1,4 +1,5 @@
 import "express-async-errors";
+import "reflect-metadata";
 import express, {
   type Request,
   type Response,

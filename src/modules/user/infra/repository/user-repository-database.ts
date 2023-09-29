@@ -1,13 +1,11 @@
 import { UserRepository } from "../../application/repository/user-repository";
 import { User } from "../../domain/User";
 
-import { DatabaseConnection } from "~/infra/database/database-connection";
+import { prismaClient } from "~/infra/database/prisma";
 
 export class UserRepositoryDatabase implements UserRepository {
-  constructor(private readonly dabaseConnection: DatabaseConnection) {}
-
   public async create(user: User): Promise<void> {
-    await this.dabaseConnection.query().user.create({
+    await prismaClient.user.create({
       data: {
         id: user._id,
         email: user._email,
@@ -18,9 +16,20 @@ export class UserRepositoryDatabase implements UserRepository {
   }
 
   public async findByEmail(email: string): Promise<User | undefined> {
-    const user = await this.dabaseConnection
-      .query()
-      .user.findUnique({ where: { email } });
+    const user = await prismaClient.user.findUnique({ where: { email } });
+
+    if (!user) return undefined;
+
+    return User.create({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      password: user.password,
+    });
+  }
+
+  public async findById(id: string): Promise<User | undefined> {
+    const user = await prismaClient.user.findUnique({ where: { id } });
 
     if (!user) return undefined;
 

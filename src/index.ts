@@ -1,18 +1,10 @@
-import express from "express";
-
-import { PrismaAdapter } from "~/infra/database/prisma-adapter";
+import { connect } from "./infra/database/prisma";
+import { HttpApp } from "./infra/http/app";
 
 async function main() {
-  const prismaAdapter = new PrismaAdapter();
-  await prismaAdapter.connect();
+  await connect();
 
-  const app = express();
-
-  app.get("/", (req, res) => {
-    return res.json({ ok: true });
-  });
-
-  app.listen(3000);
+  HttpApp.init();
 }
 
 main();

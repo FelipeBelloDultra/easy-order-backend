@@ -1,6 +1,7 @@
 import { UseCase } from "~/application/use-case/use-case";
 import { UserRepository } from "../repository/user-repository";
 import { User } from "../../domain/User";
+import { HttpError } from "~/core/errors/http-error";
 
 type Input = {
   name: string;
@@ -20,15 +21,15 @@ export class CreateUser implements UseCase<Input, Output> {
   }
 
   public async execute(input: Input): Output {
-    const existingUser = await this.userRepository.findByEmail(input.email);
-
-    if (existingUser) throw new Error("Email already exists");
-
     const user = await User.create({
       email: input.email,
       name: input.name,
       password: input.password,
     });
+
+    const existingUser = await this.userRepository.findByEmail(user._email);
+
+    if (existingUser) throw new HttpError("Email already exists", 400);
 
     await this.userRepository.create(user);
   }

@@ -1,8 +1,7 @@
 import * as zod from "zod";
 
 import { Entity } from "~/core/domain/entity";
-
-import { ValidationFailed } from "./errors/validation-failed";
+import { ValidationFailed } from "~/core/domain/errors/validation-failed";
 
 const productSchema = zod.object({
   name: zod.string().min(5).max(255),

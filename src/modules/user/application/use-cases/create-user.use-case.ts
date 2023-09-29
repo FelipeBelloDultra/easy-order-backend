@@ -1,10 +1,10 @@
 import { inject, injectable } from "tsyringe";
 
 import { UseCase } from "~/application/use-case/use-case";
-import { HttpError } from "~/core/errors/http-error";
 
 import { UserRepository } from "../repository/user-repository";
 import { User } from "../../domain/User";
+import { EmailAlreadyExists } from "./errors/email-already-exists";
 
 type Input = {
   name: string;
@@ -29,7 +29,7 @@ export class CreateUser implements UseCase<Input, Output> {
 
     const existingUser = await this.userRepository.findByEmail(user._email);
 
-    if (existingUser) throw new HttpError("Email already exists", 400);
+    if (existingUser) throw new EmailAlreadyExists();
 
     await this.userRepository.create(user);
   }

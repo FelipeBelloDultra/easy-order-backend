@@ -1,5 +1,5 @@
 import { verify, sign } from "jsonwebtoken";
-import { HttpError } from "../errors/http-error";
+import { InvalidJwt } from "./errors/invalid-jwt";
 
 interface Signature {
   id: string;
@@ -45,7 +45,7 @@ export class Jwt {
 
       return decoded;
     } catch (error) {
-      throw new HttpError("The JWT token is invalid", 401);
+      throw new InvalidJwt();
     }
   }
 }

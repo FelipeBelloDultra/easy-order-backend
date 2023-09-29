@@ -1,7 +1,8 @@
 import * as zod from "zod";
 import { randomUUID } from "node:crypto";
 import { hash, compare } from "bcryptjs";
-import { HttpError } from "~/core/errors/http-error";
+
+import { ValidationFailed } from "./errors/validation-failed";
 
 const userSchema = zod.object({
   id: zod.string().optional(),
@@ -65,7 +66,7 @@ export class User {
       });
     } catch (error) {
       if (error instanceof zod.ZodError) {
-        throw new HttpError("Validation failed", 422, error.errors);
+        throw new ValidationFailed(error.errors);
       }
     }
   }

@@ -1,10 +1,10 @@
 import { inject, injectable } from "tsyringe";
 
-import { HttpError } from "~/core/errors/http-error";
 import { UseCase } from "~/application/use-case/use-case";
 
 import { UserRepository } from "../repository/user-repository";
 import { User } from "../../domain/User";
+import { UserNotFound } from "./errors/user-not-found";
 
 type Input = {
   id: string;
@@ -22,12 +22,8 @@ export class ShowAuthenticatedUser implements UseCase<Input, Output> {
   public async execute(input: Input): Output {
     const user = await this.userRepository.findById(input.id);
 
-    if (!user) {
-      throw new HttpError("User not found", 404);
-    }
-
-    if (user._email !== input.email) {
-      throw new HttpError("Invalid email", 401);
+    if (!user || user._email !== input.email) {
+      throw new UserNotFound();
     }
 
     return user;

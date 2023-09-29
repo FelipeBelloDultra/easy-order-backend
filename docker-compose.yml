@@ -11,24 +11,6 @@ services:
       - postgres-db:/data/postgres
     ports:
       - "5432:5432"
-    networks:
-      - easy-order
-
-  app-api:
-    build: .
-    container_name: app-api
-    volumes:
-      - .:/app
-    ports:
-      - "3000:3000"
-    networks:
-      - easy-order
-    depends_on:
-      - postgres-db
-
-networks:
-  easy-order:
-    driver: bridge
 
 volumes:
   postgres-db:

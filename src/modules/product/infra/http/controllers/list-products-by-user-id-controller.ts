@@ -12,6 +12,6 @@ export class ListProductsByUserIdController implements Controller {
 
     const result = await listProductsByUserId.execute({ userId: id });
 
-    return res.json(result);
+    return res.status(200).json(result);
   }
 }

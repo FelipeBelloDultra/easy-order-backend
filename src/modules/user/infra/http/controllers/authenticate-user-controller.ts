@@ -12,6 +12,6 @@ export class AuthenticateUserController implements Controller {
 
     const result = await authenticateUser.execute({ email, password });
 
-    return res.json(result);
+    return res.status(200).json(result);
   }
 }

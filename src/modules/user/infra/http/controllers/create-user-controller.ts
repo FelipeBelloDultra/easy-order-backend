@@ -16,6 +16,6 @@ export class CreateUserController implements Controller {
       password,
     });
 
-    return res.json(result);
+    return res.status(201).send();
   }
 }

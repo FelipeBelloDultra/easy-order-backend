@@ -12,6 +12,6 @@ export class ShowAuthenticatedUserController implements Controller {
 
     const result = await showAuthenticatedUser.execute({ email, id });
 
-    return res.json(result);
+    return res.status(200).json(result);
   }
 }

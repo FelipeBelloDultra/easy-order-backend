@@ -17,6 +17,7 @@ model User {
   password   String
   clients    Client[]
   products   Product[]
+  orders     Order[]
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
 }
@@ -49,6 +50,8 @@ model Order {
   client_id  String
   client     Client @relation(fields: [client_id], references: [id])
   products   ProductOrder[]
+  user_id    String
+  user       User     @relation(fields: [user_id], references: [id])
   created_at DateTime @default(now())
   updated_at DateTime @default(now()) @updatedAt
 }

@@ -3,6 +3,7 @@ import { container } from "tsyringe";
 
 import { ShowAuthenticatedUser } from "~/modules/user/application/use-cases/show-authenticated-user.use-case";
 import { Controller } from "~/application/controller/controller";
+import { controllerPresenter } from "~/application/presenter/controller-presenter";
 
 export class ShowAuthenticatedUserController implements Controller {
   public async handle(req: Request, res: Response): Promise<Response> {
@@ -12,6 +13,6 @@ export class ShowAuthenticatedUserController implements Controller {
 
     const result = await showAuthenticatedUser.execute({ email, id });
 
-    return res.status(200).json(result);
+    return controllerPresenter(res).ok(result);
   }
 }

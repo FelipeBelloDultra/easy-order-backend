@@ -3,6 +3,7 @@ import { container } from "tsyringe";
 
 import { ListOrdersByUserId } from "~/modules/order/application/use-cases/list-orders-by-user-id.use-case";
 import { Controller } from "~/application/controller/controller";
+import { controllerPresenter } from "~/application/presenter/controller-presenter";
 
 export class ListOrdersByUserIdController implements Controller {
   public async handle(req: Request, res: Response): Promise<Response> {
@@ -19,6 +20,6 @@ export class ListOrdersByUserIdController implements Controller {
       },
     });
 
-    return res.status(200).json(result);
+    return controllerPresenter(res).ok(result);
   }
 }

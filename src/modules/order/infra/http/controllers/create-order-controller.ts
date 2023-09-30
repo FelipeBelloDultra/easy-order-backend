@@ -3,6 +3,7 @@ import { container } from "tsyringe";
 
 import { CreateOrder } from "~/modules/order/application/use-cases/create-order.use-case";
 import { Controller } from "~/application/controller/controller";
+import { controllerPresenter } from "~/application/presenter/controller-presenter";
 
 export class CreateOrderController implements Controller {
   public async handle(req: Request, res: Response): Promise<Response> {
@@ -17,6 +18,6 @@ export class CreateOrderController implements Controller {
       products,
     });
 
-    return res.status(201).send();
+    return controllerPresenter(res).created();
   }
 }

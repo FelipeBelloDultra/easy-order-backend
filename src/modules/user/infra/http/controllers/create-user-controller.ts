@@ -3,6 +3,7 @@ import { container } from "tsyringe";
 
 import { CreateUser } from "~/modules/user/application/use-cases/create-user.use-case";
 import { Controller } from "~/application/controller/controller";
+import { controllerPresenter } from "~/application/presenter/controller-presenter";
 
 export class CreateUserController implements Controller {
   public async handle(req: Request, res: Response): Promise<Response> {
@@ -10,12 +11,12 @@ export class CreateUserController implements Controller {
 
     const createUser = container.resolve(CreateUser);
 
-    const result = await createUser.execute({
+    await createUser.execute({
       email,
       name,
       password,
     });
 
-    return res.status(201).send();
+    return controllerPresenter(res).created();
   }
 }

@@ -3,6 +3,7 @@ import { container } from "tsyringe";
 
 import { CreateClient } from "~/modules/client/application/use-cases/create-client.use-case";
 import { Controller } from "~/application/controller/controller";
+import { controllerPresenter } from "~/application/presenter/controller-presenter";
 
 export class CreateClientController implements Controller {
   public async handle(req: Request, res: Response): Promise<Response> {
@@ -17,6 +18,6 @@ export class CreateClientController implements Controller {
       document,
     });
 
-    return res.status(201).send();
+    return controllerPresenter(res).created();
   }
 }

@@ -1,5 +1,6 @@
 import { ProductRepository } from "../../application/repository/product-repository";
 import { Product } from "../../domain/product";
+import { Pagination } from "~/core/domain/pagination";
 
 import { prismaClient } from "~/infra/database/prisma";
 import { PaginationRepository } from "~/application/repository/pagination-repository";
@@ -36,26 +37,37 @@ export class ProductRepositoryDatabase implements ProductRepository {
   public async findManyByUserId(
     userId: string,
     pagination: PaginationRepository
-  ): Promise<Product[]> {
+  ): Promise<Pagination<Product[]>> {
     const { skip, take } = pagination;
-    const products = await prismaClient.product.findMany({
-      skip,
-      take,
-      where: {
-        user_id: userId,
-      },
-    });
 
-    return products.map((product) =>
-      Product.create(
-        {
-          name: product.name,
-          price: product.price,
-          userId: product.user_id,
-          description: product.description || undefined,
+    const [total, products] = await Promise.all([
+      prismaClient.product.count({
+        where: {
+          user_id: userId,
         },
-        product.id
-      )
-    );
+      }),
+      prismaClient.product.findMany({
+        skip,
+        take,
+        where: {
+          user_id: userId,
+        },
+      }),
+    ]);
+
+    return Pagination.create({
+      data: products.map((product) =>
+        Product.create(
+          {
+            name: product.name,
+            price: product.price,
+            userId: product.user_id,
+            description: product.description || undefined,
+          },
+          product.id
+        )
+      ),
+      total,
+    });
   }
 }

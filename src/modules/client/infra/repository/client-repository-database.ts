@@ -1,5 +1,6 @@
 import { ClientRepository } from "../../application/repository/client-repository";
 import { Client } from "../../domain/client";
+import { Pagination } from "~/core/domain/pagination";
 
 import { prismaClient } from "~/infra/database/prisma";
 import { PaginationRepository } from "~/application/repository/pagination-repository";
@@ -34,26 +35,34 @@ export class ClientRepositoryDatabase implements ClientRepository {
   public async findManyByUserId(
     userId: string,
     pagination: PaginationRepository
-  ): Promise<Client[]> {
+  ): Promise<Pagination<Client[]>> {
     const { skip, take } = pagination;
 
-    const clients = await prismaClient.client.findMany({
-      skip,
-      take,
-      where: {
-        user_id: userId,
-      },
-    });
-
-    return clients.map((client) =>
-      Client.create(
-        {
-          name: client.name,
-          document: client.document,
-          userId: client.user_id,
+    const [total, clients] = await Promise.all([
+      prismaClient.client.count({
+        where: { user_id: userId },
+      }),
+      prismaClient.client.findMany({
+        skip,
+        take,
+        where: {
+          user_id: userId,
         },
-        client.id
-      )
-    );
+      }),
+    ]);
+
+    return Pagination.create({
+      data: clients.map((client) =>
+        Client.create(
+          {
+            name: client.name,
+            document: client.document,
+            userId: client.user_id,
+          },
+          client.id
+        )
+      ),
+      total,
+    });
   }
 }

@@ -1,4 +1,5 @@
 import { PaginationRepository } from "~/application/repository/pagination-repository";
+import { Pagination } from "~/core/domain/pagination";
 import { Product } from "../../domain/product";
 
 export interface ProductRepository {
@@ -7,5 +8,5 @@ export interface ProductRepository {
   findManyByUserId: (
     userId: string,
     pagination: PaginationRepository
-  ) => Promise<Array<Product>>;
+  ) => Promise<Pagination<Array<Product>>>;
 }

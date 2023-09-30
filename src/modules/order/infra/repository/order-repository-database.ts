@@ -37,25 +37,27 @@ export class OrderRepositoryDatabase implements OrderRepository {
   ): Promise<Pagination<Order[]>> {
     const { skip, take } = pagination;
 
-    const totalOrderByUserId = await prismaClient.order.count({
-      where: { user_id: userId },
-    });
-    const orders = await prismaClient.order.findMany({
-      skip,
-      take,
-      where: {
-        user_id: userId,
-      },
-      select: {
-        id: true,
-        client: true,
-        products: {
-          include: {
-            product: true,
+    const [total, orders] = await Promise.all([
+      prismaClient.order.count({
+        where: { user_id: userId },
+      }),
+      prismaClient.order.findMany({
+        skip,
+        take,
+        where: {
+          user_id: userId,
+        },
+        select: {
+          id: true,
+          client: true,
+          products: {
+            include: {
+              product: true,
+            },
           },
         },
-      },
-    });
+      }),
+    ]);
 
     const data = orders.map((order) =>
       Order.create(
@@ -91,6 +93,6 @@ export class OrderRepositoryDatabase implements OrderRepository {
       )
     );
 
-    return Pagination.create({ data, total: totalOrderByUserId });
+    return Pagination.create({ data, total });
   }
 }

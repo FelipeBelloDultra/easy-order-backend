@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { ensureAuthenticatedMiddleware } from "~/infra/http/middlewares/ensure-authenticated.middleware";
-import { validateCreateClient } from "../middlewares/validate-create-client";
+import { validateCreateClient } from "../middlewares/validate-create-client.middleware";
 
 import { ListClientsByUserIdController } from "../controllers/list-clients-by-user-id-controller";
 import { CreateClientController } from "../controllers/create-client-controller";

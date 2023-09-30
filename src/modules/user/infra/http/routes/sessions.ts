@@ -5,7 +5,7 @@ import { ensureAuthenticatedMiddleware } from "~/infra/http/middlewares/ensure-a
 import { ShowAuthenticatedUserController } from "../controllers/show-authenticated-user-controller";
 import { AuthenticateUserController } from "../controllers/authenticate-user-controller";
 
-import { validateCreateSession } from "../middlewares/validate-create-session";
+import { validateCreateSession } from "../middlewares/validate-create-session.middleware";
 
 const showAuthenticatedUserController = new ShowAuthenticatedUserController();
 const authenticateUserController = new AuthenticateUserController();

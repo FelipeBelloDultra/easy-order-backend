@@ -1,7 +1,7 @@
 import { Router } from "express";
 
 import { ensureAuthenticatedMiddleware } from "~/infra/http/middlewares/ensure-authenticated.middleware";
-import { validateCreateOrder } from "../middlewares/validate-create-order";
+import { validateCreateOrder } from "../middlewares/validate-create-order.middleware";
 
 import { CreateOrderController } from "../controllers/create-order-controller";
 import { ListOrdersByUserIdController } from "../controllers/list-orders-by-user-id-controller";

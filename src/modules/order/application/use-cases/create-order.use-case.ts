@@ -1,5 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { UseCase } from "~/application/use-case/use-case";
+import { CacheProvider } from "~/application/providers/cache-provider";
 
 import { OrderRepository } from "../repository/order-repository";
 import { ClientRepository } from "~/modules/client/application/repository/client-repository";
@@ -22,7 +23,7 @@ type Input = {
     quantity: number;
   }>;
 };
-type Output = Promise<void>;
+type Output = Promise<string>;
 
 @injectable()
 export class CreateOrder implements UseCase<Input, Output> {
@@ -34,7 +35,10 @@ export class CreateOrder implements UseCase<Input, Output> {
     private readonly clientRepository: ClientRepository,
 
     @inject("ProductRepository")
-    private readonly productRepository: ProductRepository
+    private readonly productRepository: ProductRepository,
+
+    @inject("CacheProvider")
+    private readonly cacheProvider: CacheProvider
   ) {}
 
   public async execute(input: Input): Output {
@@ -79,5 +83,9 @@ export class CreateOrder implements UseCase<Input, Output> {
     }
 
     await this.orderRepository.create(order);
+
+    await this.cacheProvider.invalidate(`${input.userId}:list-orders`);
+
+    return order._id;
   }
 }

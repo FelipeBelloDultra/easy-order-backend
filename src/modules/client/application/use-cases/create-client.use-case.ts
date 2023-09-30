@@ -1,5 +1,6 @@
 import { inject, injectable } from "tsyringe";
 import { UseCase } from "~/application/use-case/use-case";
+import { CacheProvider } from "~/application/providers/cache-provider";
 
 import { ClientRepository } from "../repository/client-repository";
 import { Client } from "../../domain/client";
@@ -15,7 +16,10 @@ type Output = Promise<string>;
 export class CreateClient implements UseCase<Input, Output> {
   constructor(
     @inject("ClientRepository")
-    private readonly clientRepository: ClientRepository
+    private readonly clientRepository: ClientRepository,
+
+    @inject("CacheProvider")
+    private readonly cacheProvider: CacheProvider
   ) {}
 
   public async execute(input: Input): Output {
@@ -26,6 +30,8 @@ export class CreateClient implements UseCase<Input, Output> {
     });
 
     await this.clientRepository.create(client);
+
+    await this.cacheProvider.invalidate(`${input.userId}:list-clients`);
 
     return client._id;
   }

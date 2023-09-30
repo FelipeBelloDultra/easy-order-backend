@@ -13,6 +13,13 @@ services:
     ports:
       - "5432:5432"
 
+  redis-cache:
+    image: redis:latest
+    container_name: redis-cache
+    restart: always
+    ports:
+      - "6379:6379"
+
 volumes:
   postgres-db:
     driver: local

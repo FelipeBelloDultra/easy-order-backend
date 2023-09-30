@@ -93,6 +93,6 @@ export class OrderRepositoryDatabase implements OrderRepository {
       )
     );
 
-    return Pagination.create({ data, total });
+    return Pagination.create({ result: data, total });
   }
 }

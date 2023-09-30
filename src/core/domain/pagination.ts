@@ -1,18 +1,21 @@
 type PaginationProps<T> = {
   total: number;
-  data: T;
+  result: T;
 };
 
 export class Pagination<T> {
   public readonly total: number;
-  public readonly data: T;
+  public readonly result: T;
 
-  private constructor({ data, total }: PaginationProps<T>) {
+  private constructor({ result, total }: PaginationProps<T>) {
     this.total = total;
-    this.data = data;
+    this.result = result;
   }
 
-  public static create<T>({ data, total }: PaginationProps<T>): Pagination<T> {
-    return new Pagination<T>({ data, total });
+  public static create<T>({
+    result,
+    total,
+  }: PaginationProps<T>): Pagination<T> {
+    return new Pagination<T>({ result, total });
   }
 }

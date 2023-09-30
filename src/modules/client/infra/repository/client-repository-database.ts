@@ -52,7 +52,7 @@ export class ClientRepositoryDatabase implements ClientRepository {
     ]);
 
     return Pagination.create({
-      data: clients.map((client) =>
+      result: clients.map((client) =>
         Client.create(
           {
             name: client.name,

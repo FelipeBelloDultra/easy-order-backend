@@ -56,7 +56,7 @@ export class ProductRepositoryDatabase implements ProductRepository {
     ]);
 
     return Pagination.create({
-      data: products.map((product) =>
+      result: products.map((product) =>
         Product.create(
           {
             name: product.name,

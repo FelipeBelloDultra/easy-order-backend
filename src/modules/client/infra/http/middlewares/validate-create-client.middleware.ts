@@ -22,13 +22,11 @@ export function validateCreateClient(
 ): void {
   const { name, document } = req.body;
 
-  try {
-    schemaToCreateClient.parse({ name, document });
+  const result = schemaToCreateClient.safeParse({ name, document });
 
-    return next();
-  } catch (error) {
-    if (error instanceof zod.ZodError) {
-      throw new InvalidData(error.errors);
-    }
+  if (!result.success) {
+    throw new InvalidData(result.error.flatten().fieldErrors);
   }
+
+  return next();
 }

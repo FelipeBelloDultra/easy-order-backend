@@ -22,13 +22,11 @@ export function validateCreateOrder(
 ): void {
   const { client, products } = req.body;
 
-  try {
-    schemaToCreateOrder.parse({ client, products });
+  const result = schemaToCreateOrder.safeParse({ client, products });
 
-    return next();
-  } catch (error) {
-    if (error instanceof zod.ZodError) {
-      throw new InvalidData(error.errors);
-    }
+  if (!result.success) {
+    throw new InvalidData(result.error.flatten().fieldErrors);
   }
+
+  return next();
 }

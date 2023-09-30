@@ -15,13 +15,11 @@ export function validateCreateSession(
 ): void {
   const { email, password } = req.body;
 
-  try {
-    schemaToCreateSession.parse({ email, password });
+  const result = schemaToCreateSession.safeParse({ email, password });
 
-    return next();
-  } catch (error) {
-    if (error instanceof zod.ZodError) {
-      throw new InvalidData(error.errors);
-    }
+  if (!result.success) {
+    throw new InvalidData(result.error.flatten().fieldErrors);
   }
+
+  return next();
 }

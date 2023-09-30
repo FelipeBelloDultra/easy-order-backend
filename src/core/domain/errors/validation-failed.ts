@@ -1,7 +1,7 @@
-import { HttpError } from "~/core/errors/http-error";
+import { HttpError, type HttpErrors } from "~/core/errors/http-error";
 
 export class ValidationFailed extends HttpError {
-  constructor(errors: Array<any> = []) {
+  constructor(errors: HttpErrors = {}) {
     super("Validation failed", 422, errors);
   }
 }

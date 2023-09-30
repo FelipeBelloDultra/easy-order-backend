@@ -16,13 +16,15 @@ export function validateCreateProduct(
 ): void {
   const { name, price, description } = req.body;
 
-  try {
-    schemaToCreateProduct.parse({ name, price, description });
+  const result = schemaToCreateProduct.safeParse({
+    name,
+    price,
+    description,
+  });
 
-    return next();
-  } catch (error) {
-    if (error instanceof zod.ZodError) {
-      throw new InvalidData(error.errors);
-    }
+  if (!result.success) {
+    throw new InvalidData(result.error.flatten().fieldErrors);
   }
+
+  return next();
 }

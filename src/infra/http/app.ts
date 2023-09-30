@@ -32,11 +32,7 @@ export class HttpApp {
 
         console.error(err);
 
-        return controllerPresenter(response).fail(
-          500,
-          "Internal server error",
-          []
-        );
+        return controllerPresenter(response).fail(500, "Internal server error");
       }
     );
 

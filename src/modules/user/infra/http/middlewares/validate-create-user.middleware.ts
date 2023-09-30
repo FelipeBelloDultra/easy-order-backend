@@ -16,13 +16,11 @@ export function validateCreateUser(
 ): void {
   const { name, email, password } = req.body;
 
-  try {
-    schemaToCreateUser.parse({ name, email, password });
+  const result = schemaToCreateUser.safeParse({ name, email, password });
 
-    return next();
-  } catch (error) {
-    if (error instanceof zod.ZodError) {
-      throw new InvalidData(error.errors);
-    }
+  if (!result.success) {
+    throw new InvalidData(result.error.flatten().fieldErrors);
   }
+
+  return next();
 }

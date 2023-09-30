@@ -42,16 +42,14 @@ export class User extends Entity<UserProps> {
   }
 
   private static validate(user: UserProps) {
-    try {
-      userSchema.parse({
-        name: user.name,
-        email: user.email,
-        password: user.password,
-      });
-    } catch (error) {
-      if (error instanceof zod.ZodError) {
-        throw new ValidationFailed(error.errors);
-      }
+    const result = userSchema.safeParse({
+      name: user.name,
+      email: user.email,
+      password: user.password,
+    });
+
+    if (!result.success) {
+      throw new ValidationFailed(result.error.flatten().fieldErrors);
     }
   }
 

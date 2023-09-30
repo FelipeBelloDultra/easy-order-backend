@@ -41,17 +41,15 @@ export class Product extends Entity<ProductProps> {
   }
 
   private static validate(product: ProductProps) {
-    try {
-      productSchema.parse({
-        name: product.name,
-        price: product.price,
-        description: product.description,
-        userId: product.userId,
-      });
-    } catch (error) {
-      if (error instanceof zod.ZodError) {
-        throw new ValidationFailed(error.errors);
-      }
+    const result = productSchema.safeParse({
+      name: product.name,
+      price: product.price,
+      description: product.description,
+      userId: product.userId,
+    });
+
+    if (!result.success) {
+      throw new ValidationFailed(result.error.flatten().fieldErrors);
     }
   }
 

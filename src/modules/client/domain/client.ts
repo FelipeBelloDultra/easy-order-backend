@@ -36,16 +36,14 @@ export class Client extends Entity<ClientProps> {
   }
 
   private static validate(client: ClientProps) {
-    try {
-      clientSchema.parse({
-        name: client.name,
-        document: client.document,
-        userId: client.userId,
-      });
-    } catch (error) {
-      if (error instanceof zod.ZodError) {
-        throw new ValidationFailed(error.errors);
-      }
+    const result = clientSchema.safeParse({
+      name: client.name,
+      document: client.document,
+      userId: client.userId,
+    });
+
+    if (!result.success) {
+      throw new ValidationFailed(result.error.flatten().fieldErrors);
     }
   }
 

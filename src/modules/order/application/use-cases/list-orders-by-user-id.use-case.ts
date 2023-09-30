@@ -4,12 +4,13 @@ import { PaginationRepository } from "~/application/repository/pagination-reposi
 
 import { OrderRepository } from "../repository/order-repository";
 import { Order } from "../../domain/order";
+import { Pagination } from "~/core/domain/pagination";
 
 type Input = {
   userId: string;
   pagination: PaginationRepository;
 };
-type Output = Promise<Array<Order>>;
+type Output = Promise<Pagination<Array<Order>>>;
 
 @injectable()
 export class ListOrdersByUserId implements UseCase<Input, Output> {

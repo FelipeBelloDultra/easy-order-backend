@@ -7,10 +7,17 @@ import { Controller } from "~/application/controller/controller";
 export class ListClientsByUserIdController implements Controller {
   public async handle(req: Request, res: Response): Promise<Response> {
     const { id } = req.user;
+    const { skip, take } = req.query;
 
     const listClientsByUserId = container.resolve(ListClientsByUserId);
 
-    const result = await listClientsByUserId.execute({ userId: id });
+    const result = await listClientsByUserId.execute({
+      userId: id,
+      pagination: {
+        skip: Number(skip),
+        take: Number(take),
+      },
+    });
 
     return res.status(200).json(result);
   }

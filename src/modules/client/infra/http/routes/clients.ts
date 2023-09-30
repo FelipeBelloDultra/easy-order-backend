@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import { ensureAuthenticatedMiddleware } from "~/infra/http/middlewares/ensure-authenticated.middleware";
+import { pagination } from "~/infra/http/middlewares/pagination.middleware";
 import { validateCreateClient } from "../middlewares/validate-create-client.middleware";
 
 import { ListClientsByUserIdController } from "../controllers/list-clients-by-user-id-controller";
@@ -14,6 +15,7 @@ const clientRouter = Router();
 clientRouter.get(
   "/",
   ensureAuthenticatedMiddleware,
+  pagination,
   listClientsByUserIdController.handle
 );
 clientRouter.post(

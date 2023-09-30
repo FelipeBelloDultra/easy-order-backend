@@ -1,9 +1,10 @@
-import { Client } from "~/modules/client/domain/client";
 import { OrderRepository } from "../../application/repository/order-repository";
+import { Client } from "~/modules/client/domain/client";
 import { Order } from "../../domain/order";
+import { Pagination } from "~/core/domain/pagination";
+import { Product } from "~/modules/product/domain/product";
 
 import { prismaClient } from "~/infra/database/prisma";
-import { Product } from "~/modules/product/domain/product";
 import { OrderProduct } from "../../domain/order-product";
 import { PaginationRepository } from "~/application/repository/pagination-repository";
 
@@ -33,9 +34,12 @@ export class OrderRepositoryDatabase implements OrderRepository {
   public async findManyByUserId(
     userId: string,
     pagination: PaginationRepository
-  ): Promise<Order[]> {
+  ): Promise<Pagination<Order[]>> {
     const { skip, take } = pagination;
 
+    const totalOrderByUserId = await prismaClient.order.count({
+      where: { user_id: userId },
+    });
     const orders = await prismaClient.order.findMany({
       skip,
       take,
@@ -53,7 +57,7 @@ export class OrderRepositoryDatabase implements OrderRepository {
       },
     });
 
-    return orders.map((order) =>
+    const data = orders.map((order) =>
       Order.create(
         {
           client: Client.create(
@@ -86,5 +90,7 @@ export class OrderRepositoryDatabase implements OrderRepository {
         order.id
       )
     );
+
+    return Pagination.create({ data, total: totalOrderByUserId });
   }
 }

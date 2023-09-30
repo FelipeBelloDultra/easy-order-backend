@@ -2,6 +2,7 @@ import { ClientRepository } from "../../application/repository/client-repository
 import { Client } from "../../domain/client";
 
 import { prismaClient } from "~/infra/database/prisma";
+import { PaginationRepository } from "~/application/repository/pagination-repository";
 
 export class ClientRepositoryDatabase implements ClientRepository {
   public async create(client: Client): Promise<void> {
@@ -30,8 +31,15 @@ export class ClientRepositoryDatabase implements ClientRepository {
     );
   }
 
-  public async findManyByUserId(userId: string): Promise<Client[]> {
+  public async findManyByUserId(
+    userId: string,
+    pagination: PaginationRepository
+  ): Promise<Client[]> {
+    const { skip, take } = pagination;
+
     const clients = await prismaClient.client.findMany({
+      skip,
+      take,
       where: {
         user_id: userId,
       },

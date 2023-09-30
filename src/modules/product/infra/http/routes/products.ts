@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { ensureAuthenticatedMiddleware } from "~/infra/http/middlewares/ensure-authenticated.middleware";
 import { validateCreateProduct } from "../middlewares/validate-create-product.middleware";
+import { pagination } from "~/infra/http/middlewares/pagination.middleware";
 
 import { ListProductsByUserIdController } from "../controllers/list-products-by-user-id-controller";
 import { CreateProductController } from "../controllers/create-product-controller";
@@ -14,6 +15,7 @@ const productRouter = Router();
 productRouter.get(
   "/",
   ensureAuthenticatedMiddleware,
+  pagination,
   listProductsByUserIdController.handle
 );
 productRouter.post(

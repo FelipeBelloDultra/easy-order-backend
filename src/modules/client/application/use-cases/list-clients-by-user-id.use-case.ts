@@ -2,15 +2,15 @@ import { inject, injectable } from "tsyringe";
 import { UseCase } from "~/application/use-case/use-case";
 import { PaginationRepository } from "~/application/repository/pagination-repository";
 
-import { Client } from "../../domain/client";
 import { ClientRepository } from "../repository/client-repository";
 import { Pagination } from "~/core/domain/pagination";
+import { FindManyByUserIdQuery } from "../query/client-query";
 
 type Input = {
   userId: string;
   pagination: PaginationRepository;
 };
-type Output = Promise<Pagination<Array<Client>>>;
+type Output = Promise<Pagination<FindManyByUserIdQuery>>;
 
 @injectable()
 export class ListClientsByUserId implements UseCase<Input, Output> {

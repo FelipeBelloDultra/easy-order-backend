@@ -4,6 +4,7 @@ import { Pagination } from "~/core/domain/pagination";
 
 import { prismaClient } from "~/infra/database/prisma";
 import { PaginationRepository } from "~/application/repository/pagination-repository";
+import { FindManyByUserIdQuery } from "../../application/query/product-query";
 
 export class ProductRepositoryDatabase implements ProductRepository {
   public async create(product: Product): Promise<void> {
@@ -37,7 +38,7 @@ export class ProductRepositoryDatabase implements ProductRepository {
   public async findManyByUserId(
     userId: string,
     pagination: PaginationRepository
-  ): Promise<Pagination<Product[]>> {
+  ): Promise<Pagination<FindManyByUserIdQuery>> {
     const { skip, take } = pagination;
 
     const [total, products] = await Promise.all([
@@ -55,18 +56,15 @@ export class ProductRepositoryDatabase implements ProductRepository {
       }),
     ]);
 
+    const data = products.map((product) => ({
+      id: product.id,
+      price: product.price,
+      description: product.description || undefined,
+      name: product.name,
+    }));
+
     return Pagination.create({
-      result: products.map((product) =>
-        Product.create(
-          {
-            name: product.name,
-            price: product.price,
-            userId: product.user_id,
-            description: product.description || undefined,
-          },
-          product.id
-        )
-      ),
+      result: data,
       total,
     });
   }

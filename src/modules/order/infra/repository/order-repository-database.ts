@@ -1,12 +1,10 @@
 import { OrderRepository } from "../../application/repository/order-repository";
-import { Client } from "~/modules/client/domain/client";
 import { Order } from "../../domain/order";
 import { Pagination } from "~/core/domain/pagination";
-import { Product } from "~/modules/product/domain/product";
 
 import { prismaClient } from "~/infra/database/prisma";
-import { OrderProduct } from "../../domain/order-product";
 import { PaginationRepository } from "~/application/repository/pagination-repository";
+import { FindManyByUserIdQuery } from "../../application/query/order-query";
 
 export class OrderRepositoryDatabase implements OrderRepository {
   public async create(order: Order): Promise<void> {
@@ -34,7 +32,7 @@ export class OrderRepositoryDatabase implements OrderRepository {
   public async findManyByUserId(
     userId: string,
     pagination: PaginationRepository
-  ): Promise<Pagination<Order[]>> {
+  ): Promise<Pagination<FindManyByUserIdQuery>> {
     const { skip, take } = pagination;
 
     const [total, orders] = await Promise.all([
@@ -59,39 +57,23 @@ export class OrderRepositoryDatabase implements OrderRepository {
       }),
     ]);
 
-    const data = orders.map((order) =>
-      Order.create(
-        {
-          client: Client.create(
-            {
-              document: order.client.document,
-              name: order.client.name,
-              userId,
-            },
-            order.client.id
-          ),
-          userId,
-          products: order.products.map((product) =>
-            OrderProduct.create(
-              {
-                product: Product.create(
-                  {
-                    name: product.product.name,
-                    price: product.product.price,
-                    description: product.product.description || undefined,
-                    userId,
-                  },
-                  product.product.id
-                ),
-                quantity: product.quantity,
-              },
-              product.order_id
-            )
-          ),
+    const data = orders.map((order) => ({
+      id: order.id,
+      client: {
+        id: order.client.id,
+        document: order.client.document,
+        name: order.client.name,
+      },
+      products: order.products.map((product) => ({
+        quantity: product.quantity,
+        product: {
+          id: product.product.id,
+          name: product.product.name,
+          description: product.product.description || undefined,
+          price: product.product.price,
         },
-        order.id
-      )
-    );
+      })),
+    }));
 
     return Pagination.create({ result: data, total });
   }

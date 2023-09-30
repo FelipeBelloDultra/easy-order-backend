@@ -4,6 +4,7 @@ import { Pagination } from "~/core/domain/pagination";
 
 import { prismaClient } from "~/infra/database/prisma";
 import { PaginationRepository } from "~/application/repository/pagination-repository";
+import { FindManyByUserIdQuery } from "../../application/query/client-query";
 
 export class ClientRepositoryDatabase implements ClientRepository {
   public async create(client: Client): Promise<void> {
@@ -35,7 +36,7 @@ export class ClientRepositoryDatabase implements ClientRepository {
   public async findManyByUserId(
     userId: string,
     pagination: PaginationRepository
-  ): Promise<Pagination<Client[]>> {
+  ): Promise<Pagination<FindManyByUserIdQuery>> {
     const { skip, take } = pagination;
 
     const [total, clients] = await Promise.all([
@@ -51,17 +52,14 @@ export class ClientRepositoryDatabase implements ClientRepository {
       }),
     ]);
 
+    const data = clients.map((client) => ({
+      id: client.id,
+      name: client.name,
+      document: client.document,
+    }));
+
     return Pagination.create({
-      result: clients.map((client) =>
-        Client.create(
-          {
-            name: client.name,
-            document: client.document,
-            userId: client.user_id,
-          },
-          client.id
-        )
-      ),
+      result: data,
       total,
     });
   }

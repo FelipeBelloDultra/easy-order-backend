@@ -10,6 +10,7 @@ import cors from "cors";
 import { HttpError } from "~/core/errors/http-error";
 
 import { router } from "./routes";
+import { controllerPresenter } from "~/application/presenter/controller-presenter";
 
 export class HttpApp {
   public static init() {
@@ -22,22 +23,20 @@ export class HttpApp {
     app.use(
       (err: Error, request: Request, response: Response, _: NextFunction) => {
         if (err instanceof HttpError) {
-          return response.status(err.statusCode).json({
-            code: err.statusCode,
-            status: "error",
-            message: err.message,
-            errors: err.errors,
-          });
+          return controllerPresenter(response).fail(
+            err.statusCode,
+            err.message,
+            err.errors
+          );
         }
 
         console.error(err);
 
-        return response.status(500).json({
-          code: 500,
-          status: "error",
-          message: "Internal server error",
-          errors: [],
-        });
+        return controllerPresenter(response).fail(
+          500,
+          "Internal server error",
+          []
+        );
       }
     );
 

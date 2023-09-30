@@ -19,7 +19,7 @@ type Input = {
     id: string;
   };
   products: Array<{
-    productId: string;
+    product_id: string;
     quantity: number;
   }>;
 };
@@ -64,10 +64,10 @@ export class CreateOrder implements UseCase<Input, Output> {
     });
 
     for (const product of input.products) {
-      if (order.existsProductInOrderProduct(product.productId)) continue;
+      if (order.existsProductInOrderProduct(product.product_id)) continue;
 
       const findedProduct = await this.productRepository.findById(
-        product.productId
+        product.product_id
       );
 
       if (!findedProduct || findedProduct._userId !== input.userId) {

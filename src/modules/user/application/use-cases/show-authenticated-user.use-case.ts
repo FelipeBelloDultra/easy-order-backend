@@ -10,7 +10,11 @@ type Input = {
   id: string;
   email: string;
 };
-type Output = Promise<User>;
+type Output = Promise<{
+  id: string;
+  name: string;
+  email: string;
+}>;
 
 @injectable()
 export class ShowAuthenticatedUser implements UseCase<Input, Output> {
@@ -26,6 +30,10 @@ export class ShowAuthenticatedUser implements UseCase<Input, Output> {
       throw new UserNotFound();
     }
 
-    return user;
+    return {
+      id: user._id,
+      name: user._name,
+      email: user._email,
+    };
   }
 }

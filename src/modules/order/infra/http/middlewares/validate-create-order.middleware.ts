@@ -9,7 +9,7 @@ const schemaToCreateOrder = zod.object({
   }),
   products: zod.array(
     zod.object({
-      productId: zod.string(),
+      product_id: zod.string(),
       quantity: zod.number(),
     })
   ),

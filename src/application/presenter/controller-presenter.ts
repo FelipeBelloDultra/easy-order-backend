@@ -8,5 +8,15 @@ export function controllerPresenter(response: Response) {
     ok<T>(data: T): Response {
       return response.status(200).json({ data });
     },
+    fail(status: number, message: string, errors: Array<any> = []): Response {
+      return response.status(status).json({
+        error: {
+          code: status,
+          status: "error",
+          message: message,
+          errors,
+        },
+      });
+    },
   };
 }

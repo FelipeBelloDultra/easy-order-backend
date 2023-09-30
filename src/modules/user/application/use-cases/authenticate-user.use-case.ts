@@ -10,7 +10,10 @@ type Input = {
   email: string;
   password: string;
 };
-type Output = Promise<Jwt>;
+type Output = Promise<{
+  authenticated_id: string;
+  token: string;
+}>;
 
 @injectable()
 export class AuthenticateUser implements UseCase<Input, Output> {
@@ -34,6 +37,9 @@ export class AuthenticateUser implements UseCase<Input, Output> {
 
     const jwt = Jwt.signIn({ id: finded._id, email: finded._email });
 
-    return jwt;
+    return {
+      authenticated_id: jwt.authenticatedId,
+      token: jwt.token,
+    };
   }
 }

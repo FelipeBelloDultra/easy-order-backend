@@ -11,7 +11,7 @@ type Input = {
   email: string;
   password: string;
 };
-type Output = Promise<void>;
+type Output = Promise<string>;
 
 @injectable()
 export class CreateUser implements UseCase<Input, Output> {
@@ -32,5 +32,7 @@ export class CreateUser implements UseCase<Input, Output> {
     if (existingUser) throw new EmailAlreadyExists();
 
     await this.userRepository.create(user);
+
+    return user._id;
   }
 }

@@ -36,4 +36,15 @@ export class OrderProduct extends Entity<OrderProductProps> {
       id
     );
   }
+
+  public calculateOrderPrice(): number {
+    return this._product.centsPriceToReal() * this._quantity;
+  }
+
+  public get getFormattedOrderPrice(): string {
+    return Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(this.calculateOrderPrice());
+  }
 }

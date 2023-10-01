@@ -44,4 +44,17 @@ export class Order extends Entity<OrderProps> {
       id
     );
   }
+
+  public calculateTotalOrderPrice() {
+    const totalPriceByOrder = this._products.reduce((total, currentProduct) => {
+      total += currentProduct.calculateOrderPrice();
+
+      return total;
+    }, 0);
+
+    return Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(totalPriceByOrder);
+  }
 }

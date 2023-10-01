@@ -66,4 +66,15 @@ export class Product extends Entity<ProductProps> {
       id
     );
   }
+
+  public centsPriceToReal(): number {
+    return this._price / 100;
+  }
+
+  public get getFormattedProductPrice(): string {
+    return Intl.NumberFormat("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    }).format(this.centsPriceToReal());
+  }
 }

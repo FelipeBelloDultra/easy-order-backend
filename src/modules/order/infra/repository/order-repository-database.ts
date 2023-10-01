@@ -4,7 +4,10 @@ import { Pagination } from "~/core/domain/pagination";
 
 import { prismaClient } from "~/infra/database/prisma";
 import { PaginationRepository } from "~/application/repository/pagination-repository";
-import { FindManyByUserIdQuery } from "../../application/query/order-query";
+import {
+  FindManyByUserIdQuery,
+  FindOneById,
+} from "../../application/query/order-query";
 
 export class OrderRepositoryDatabase implements OrderRepository {
   public async create(order: Order): Promise<void> {
@@ -76,5 +79,48 @@ export class OrderRepositoryDatabase implements OrderRepository {
     }));
 
     return Pagination.create({ result: data, total });
+  }
+
+  public async findOneById(
+    orderId: string,
+    userId: string
+  ): Promise<FindOneById | undefined> {
+    const order = await prismaClient.order.findUnique({
+      where: {
+        user_id: userId,
+        id: orderId,
+      },
+      select: {
+        id: true,
+        client: true,
+        products: {
+          include: {
+            product: true,
+          },
+        },
+      },
+    });
+
+    if (!order) return undefined;
+
+    const data = {
+      id: order.id,
+      client: {
+        id: order.client.id,
+        document: order.client.document,
+        name: order.client.name,
+      },
+      products: order.products.map((product) => ({
+        quantity: product.quantity,
+        product: {
+          id: product.product.id,
+          name: product.product.name,
+          description: product.product.description || undefined,
+          price: product.product.price,
+        },
+      })),
+    };
+
+    return data;
   }
 }

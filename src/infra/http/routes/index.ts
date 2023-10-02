@@ -6,7 +6,11 @@ import { clientRouter } from "~/modules/client/infra/http/routes/clients";
 import { userRouter } from "~/modules/user/infra/http/routes/users";
 import { orderRouter } from "~/modules/order/infra/http/routes/orders";
 
+import { requestRateLimiter } from "../middlewares/rate-limit.middleware";
+
 const router = Router();
+
+router.use(requestRateLimiter());
 
 router.use("/users", userRouter);
 router.use("/session", sessionRouter);

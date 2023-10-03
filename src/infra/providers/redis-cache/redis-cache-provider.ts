@@ -1,5 +1,5 @@
 import { CacheProvider } from "~/application/providers/cache-provider";
-import { redisClient } from "../cache/redis";
+import { redisClient } from "../../cache/redis";
 
 export class RedisCacheProvider implements CacheProvider {
   public async save<T>(key: string, value: T): Promise<void> {

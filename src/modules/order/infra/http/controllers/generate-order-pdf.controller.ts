@@ -2,7 +2,6 @@ import { type Request, type Response } from "express";
 import { container } from "tsyringe";
 
 import { GenerateOrderPdf } from "~/modules/order/application/use-cases/generate-order-pdf.use-case";
-import { FindOrderById } from "~/modules/order/application/use-cases/find-order-by-id.use-case";
 import { Controller } from "~/application/controller/controller";
 
 export class GenerateOrderPdfController implements Controller {
@@ -10,26 +9,18 @@ export class GenerateOrderPdfController implements Controller {
     const { order_id } = req.params;
     const { id } = req.user;
 
-    const findOrderById = container.resolve(FindOrderById);
-    const order = await findOrderById.execute({
-      orderId: order_id,
-      userId: id,
-    });
-
-    const generateOrderPdf = new GenerateOrderPdf();
+    const generateOrderPdf = container.resolve(GenerateOrderPdf);
 
     const stream = res.writeHead(200, {
       "Content-Type": "application/pdf",
-      "Content-Disposition": `attachment;filename=order-${order.id}-pdf.pdf`,
+      "Content-Disposition": `attachment;filename=order-${order_id}-pdf.pdf`,
     });
 
-    generateOrderPdf.execute(
-      {
-        order,
-        userId: id,
-      },
-      (chunk) => stream.write(chunk),
-      () => stream.end()
-    );
+    await generateOrderPdf.execute({
+      orderId: order_id,
+      userId: id,
+      onData: (chunk) => stream.write(chunk),
+      onFinish: () => stream.end(),
+    });
   }
 }

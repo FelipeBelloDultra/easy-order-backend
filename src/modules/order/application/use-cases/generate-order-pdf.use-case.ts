@@ -1,23 +1,42 @@
+import { inject, injectable } from "tsyringe";
 import PDFDocument from "pdfkit";
-import { type CallbackUseCase } from "~/application/use-case/use-case";
+import { type UseCase } from "~/application/use-case/use-case";
 
-import { FindOneById } from "../query/order-query";
-
-import { Order } from "../../domain/order";
-import { Client } from "~/modules/client/domain/client";
-import { OrderProduct } from "../../domain/order-product";
 import { Product } from "~/modules/product/domain/product";
+import { Client } from "~/modules/client/domain/client";
+import { Order } from "../../domain/order";
+import { OrderProduct } from "../../domain/order-product";
 
-type Input = { order: FindOneById; userId: string };
-type OnData = (chunk: Buffer) => void;
-type OnFinish = () => void;
-type Output = void;
+import { OrderRepository } from "../repository/order-repository";
 
-export class GenerateOrderPdf implements CallbackUseCase<Input, Output> {
-  public execute(input: Input, onData: OnData, onFinish: OnFinish): Output {
+import { OrderNotFound } from "./errors/order-not-found";
+
+type Input = {
+  orderId: string;
+  userId: string;
+  onFinish: () => void;
+  onData: (data: Buffer) => void;
+};
+type Output = Promise<void>;
+
+@injectable()
+export class GenerateOrderPdf implements UseCase<Input, Output> {
+  constructor(
+    @inject("OrderRepository")
+    private readonly orderRepository: OrderRepository
+  ) {}
+
+  public async execute(input: Input): Output {
+    const findedOrder = await this.orderRepository.findOneById(
+      input.orderId,
+      input.userId
+    );
+
+    if (!findedOrder) throw new OrderNotFound();
+
     const order = Order.create(
       {
-        products: input.order.products.map((orderProduct) =>
+        products: findedOrder.products.map((orderProduct) =>
           OrderProduct.create({
             quantity: orderProduct.quantity,
             product: Product.create(
@@ -34,20 +53,19 @@ export class GenerateOrderPdf implements CallbackUseCase<Input, Output> {
         userId: input.userId,
         client: Client.create(
           {
-            name: input.order.client.name,
-            document: input.order.client.document,
+            name: findedOrder.client.name,
+            document: findedOrder.client.document,
             userId: input.userId,
           },
-          input.order.client.id
+          findedOrder.client.id
         ),
       },
-      input.order.id
+      findedOrder.id
     );
+    const doc = new PDFDocument({ size: "a4" });
 
-    const doc = new PDFDocument({ size: "a4" }); //(595.28 x 841.89)
-
-    doc.on("data", onData);
-    doc.on("end", onFinish);
+    doc.on("data", input.onData);
+    doc.on("end", input.onFinish);
 
     doc.fontSize(22).text("Revisar pedido", { align: "center" }).moveDown();
 

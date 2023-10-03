@@ -8,6 +8,7 @@ import { Order } from "../../domain/order";
 import { OrderProduct } from "../../domain/order-product";
 
 import { OrderRepository } from "../repository/order-repository";
+import { PdfProvider } from "~/application/providers/pdf-provider";
 
 import { OrderNotFound } from "./errors/order-not-found";
 
@@ -23,7 +24,10 @@ type Output = Promise<void>;
 export class GenerateOrderPdf implements UseCase<Input, Output> {
   constructor(
     @inject("OrderRepository")
-    private readonly orderRepository: OrderRepository
+    private readonly orderRepository: OrderRepository,
+
+    @inject("PdfProvider")
+    private readonly pdfProvider: PdfProvider
   ) {}
 
   public async execute(input: Input): Output {
@@ -62,40 +66,17 @@ export class GenerateOrderPdf implements UseCase<Input, Output> {
       },
       findedOrder.id
     );
-    const doc = new PDFDocument({ size: "a4" });
 
-    doc.on("data", input.onData);
-    doc.on("end", input.onFinish);
+    this.pdfProvider.getDoc().on("data", input.onData);
+    this.pdfProvider.getDoc().on("end", input.onFinish);
 
-    doc.fontSize(22).text("Revisar pedido", { align: "center" }).moveDown();
+    this.pdfProvider.setMainTitle("Revisar pedido");
 
-    doc
-      .fontSize(18)
-      .text(`Valor do pedido: ${order.calculateTotalOrderPrice()}`)
-      .moveDown();
+    this.pdfProvider.setOrderTitle(order.calculateTotalOrderPrice());
 
-    doc.fontSize(16).text("Cliente:").moveDown();
+    this.pdfProvider.addOrderClient(order._client);
+    this.pdfProvider.addOrderProduct(order._products);
 
-    doc
-      .fontSize(12)
-      .text(`Nome: ${order._client._name}`)
-      .text(`Documento: ${order._client._document}`)
-      .moveDown();
-
-    doc.fontSize(16).text("Produtos:").moveDown();
-
-    order._products.forEach((product) => {
-      doc
-        .fontSize(12)
-        .text(`Nome do produto: ${product._product._name}`)
-        .text(`Quantidade no pedido: ${product._quantity}`)
-        .text(`Valor unitario: $${product._product.getFormattedProductPrice}`)
-        .text(
-          `Valor total (unitario x quantidade): ${product.getFormattedOrderPrice}`
-        )
-        .moveDown();
-    });
-
-    doc.end();
+    this.pdfProvider.end();
   }
 }

@@ -31,7 +31,7 @@ export class CreateClient implements UseCase<Input, Output> {
 
     await this.clientRepository.create(client);
 
-    await this.cacheProvider.invalidate(`${input.userId}:list-clients`);
+    await this.cacheProvider.invalidate(`${input.userId}:list-clients:*`);
 
     return client._id;
   }

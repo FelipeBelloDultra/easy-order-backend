@@ -84,7 +84,7 @@ export class CreateOrder implements UseCase<Input, Output> {
 
     await this.orderRepository.create(order);
 
-    await this.cacheProvider.invalidate(`${input.userId}:list-orders`);
+    await this.cacheProvider.invalidate(`${input.userId}:list-orders:*`);
 
     return order._id;
   }

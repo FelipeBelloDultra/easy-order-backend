@@ -24,7 +24,7 @@ export class ListOrdersByUserId implements UseCase<Input, Output> {
   ) {}
   public async execute(input: Input): Output {
     let orders = await this.cacheProvider.getByKey<Output>(
-      `${input.userId}:list-orders`
+      `${input.userId}:list-orders:skip-${input.pagination.skip}:take-${input.pagination.take}`
     );
 
     if (!orders) {

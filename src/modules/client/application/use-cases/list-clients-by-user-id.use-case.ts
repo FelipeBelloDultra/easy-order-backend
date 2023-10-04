@@ -25,7 +25,7 @@ export class ListClientsByUserId implements UseCase<Input, Output> {
 
   public async execute(input: Input): Output {
     let clients = await this.cacheProvider.getByKey<Output>(
-      `${input.userId}:list-clients`
+      `${input.userId}:list-clients:skip-${input.pagination.skip}:take-${input.pagination.take}`
     );
 
     if (!clients) {

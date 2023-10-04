@@ -33,7 +33,7 @@ export class CreateProduct implements UseCase<Input, Output> {
 
     await this.productRepository.create(product);
 
-    await this.cacheProvider.invalidate(`${input.userId}:list-products`);
+    await this.cacheProvider.invalidate(`${input.userId}:list-products:*`);
 
     return product._id;
   }

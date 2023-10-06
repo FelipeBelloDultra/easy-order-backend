@@ -50,6 +50,11 @@ export class ProductRepositoryDatabase implements ProductRepository {
       prismaClient.product.findMany({
         skip,
         take,
+        orderBy: [
+          {
+            created_at: "desc",
+          },
+        ],
         where: {
           user_id: userId,
         },

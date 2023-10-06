@@ -9,7 +9,7 @@ const schemaToCreateOrder = zod.object({
   }),
   products: zod.array(
     zod.object({
-      product_id: zod.string(),
+      id: zod.string(),
       quantity: zod.number(),
     })
   ),
@@ -21,6 +21,10 @@ export function validateCreateOrder(
   next: NextFunction
 ): void {
   const { client, products } = req.body;
+
+  if (!products || !products.length) {
+    throw new InvalidData({ products: ["Required"] });
+  }
 
   const result = schemaToCreateOrder.safeParse({ client, products });
 

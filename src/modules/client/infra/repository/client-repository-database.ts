@@ -46,6 +46,11 @@ export class ClientRepositoryDatabase implements ClientRepository {
       prismaClient.client.findMany({
         skip,
         take,
+        orderBy: [
+          {
+            created_at: "desc",
+          },
+        ],
         where: {
           user_id: userId,
         },

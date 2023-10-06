@@ -45,6 +45,11 @@ export class OrderRepositoryDatabase implements OrderRepository {
       prismaClient.order.findMany({
         skip,
         take,
+        orderBy: [
+          {
+            created_at: "desc",
+          },
+        ],
         where: {
           user_id: userId,
         },

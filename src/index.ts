@@ -1,3 +1,5 @@
+import "dotenv/config";
+
 import { HttpApp } from "./infra/http/app";
 
 import { connect as prismaConnect } from "./infra/database/prisma";

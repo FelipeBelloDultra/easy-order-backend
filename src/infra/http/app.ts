@@ -18,7 +18,11 @@ export class HttpApp {
   public static init() {
     const app = express();
 
-    app.use(cors());
+    app.use(
+      cors({
+        origin: process.env.FRONTEND_URL || "*",
+      })
+    );
     app.use(helmet());
     app.use(
       morgan(":method :url :status :res[content-length] - :response-time ms")
